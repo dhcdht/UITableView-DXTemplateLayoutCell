@@ -133,6 +133,65 @@ class ViewController: UITableViewController, UIActionSheetDelegate {
     
     func actionSheet(actionSheet: UIActionSheet, clickedButtonAtIndex buttonIndex: Int) {
         //TODO:
+        var selectors = [
+            "insertRow",
+            "insertSection",
+            "deleteSection",
+        ]
+        
+        var index = buttonIndex-1;
+        if (index < selectors.count) {
+            var sel: Selector = Selector(selectors[index])
+            NSTimer.scheduledTimerWithTimeInterval(0, target: self, selector: sel, userInfo: nil, repeats: false)
+        }
+    }
+    
+    func randomEntity() -> DXFeedEntity? {
+        var count: Int
+        if let jsonArray = self.prototypeEntitiesFromJSON {
+            count = jsonArray.count
+            var randomNumber = arc4random_uniform(UInt32(count))
+            var randomEntity = jsonArray[Int(randomNumber)] as! DXFeedEntity
+            
+            return randomEntity
+        }
+        
+        return nil
+    }
+    
+    func insertRow() {
+        if (self.feedEntitySections?.count == 0) {
+            self.feedEntitySections?.addObject(NSMutableArray())
+        }
+        
+        var entity = self.randomEntity()
+        if let notNilEntity = entity {
+            self.tableView.beginUpdates()
+            var arr = self.feedEntitySections?.objectAtIndex(0) as! NSMutableArray
+            arr.insertObject(notNilEntity, atIndex: 0)
+            var indexPath = NSIndexPath(forItem: 0, inSection: 0)
+            self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
+            self.tableView.endUpdates()
+        }
+    }
+    
+    func insertSection() {
+        var entity = self.randomEntity()
+        if let notNilEntity = entity {
+            self.tableView.beginUpdates()
+            self.feedEntitySections?.insertObject([notNilEntity], atIndex: 0)
+            self.tableView.insertSections(NSIndexSet(index: 0), withRowAnimation: UITableViewRowAnimation.Automatic)
+            self.tableView.endUpdates()
+        }
+    }
+    
+    func deleteSection() {
+        if (self.feedEntitySections?.count > 0) {
+            self.tableView.beginUpdates()
+            self.feedEntitySections?.removeObjectAtIndex(0)
+            self.tableView.deleteSections(NSIndexSet(index: 0), withRowAnimation: UITableViewRowAnimation.Automatic)
+            self.tableView.endUpdates()
+        }
     }
 }
 
