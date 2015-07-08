@@ -399,6 +399,19 @@ private class DXTemplateLayoutCellHeightCache {
 }
 
 extension UITableView {
+    
+    func dx_reloadData(shouldRemoveCache: Bool) -> Void {
+        if let notNilAutoCache = self.dx_autoCacheInvalidationEnabled {
+            if (notNilAutoCache && shouldRemoveCache) {
+                self.dx_cellHeightCache.sections.removeAllObjects()
+            }
+        }
+        
+        self.dx_reloadData()
+        
+        self.dx_precacheIfNeed()
+    }
+    
     override public class func initialize() {
         struct Static {
             static var token: dispatch_once_t = 0
@@ -427,15 +440,7 @@ extension UITableView {
     }
     
     func dx_reloadData() -> Void {
-        if let notNilAutoCache = self.dx_autoCacheInvalidationEnabled {
-            if (notNilAutoCache) {
-                self.dx_cellHeightCache.sections.removeAllObjects()
-            }
-        }
-        
-        self.dx_reloadData()
-        
-        self.dx_precacheIfNeed()
+        self.dx_reloadData(true)
     }
     
     func dx_insertSections(sections: NSIndexSet, withRowAnimation: UITableViewRowAnimation) -> Void {
