@@ -76,9 +76,11 @@ extension UITableView {
                 // Add a hard width constraint to make dynamic content views (like labels) expand vertically instead
                 // of growing horizontally, in a flow-layout manner.
                 var tempWidthConstraint = NSLayoutConstraint(item: cell.contentView, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute, multiplier: 1, constant: contentViewWidth)
+                objc_sync_enter(cell.contentView)
                 cell.contentView.addConstraint(tempWidthConstraint)
                 fittingSize = cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
                 cell.contentView.removeConstraint(tempWidthConstraint)
+                objc_sync_exit(cell.contentView)
             } else {
                 // If not using auto layout, you have to override "-sizeThatFits:" to provide a fitting size by yourself.
                 // This is the same method used in iOS8 self-sizing cell's implementation.
